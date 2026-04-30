@@ -138,12 +138,14 @@ public class PlayerServiceImpl implements PlayerService {
         while (player.getExp() >= getExpToNextLevel(player.getLevel())) {
             player.setExp(player.getExp() - getExpToNextLevel(player.getLevel()));
             player.setLevel(player.getLevel() + 1);
-            player.setAttack(player.getAttack() + 3);
-            player.setDefense(player.getDefense() + 2);
-            player.setMaxHp(player.getMaxHp() + 20);
+            // 属性成长: 每级攻击+2, 防御+1, 气血+15
+            player.setAttack(player.getAttack() + 2);
+            player.setDefense(player.getDefense() + 1);
+            player.setMaxHp(player.getMaxHp() + 15);
             player.setHp(player.getMaxHp());
-            player.setIdleGoldRate(player.getIdleGoldRate().add(new BigDecimal("0.2")));
-            player.setIdleExpRate(player.getIdleExpRate().add(new BigDecimal("0.1")));
+            // 放置速率成长: 每级+0.15金币, +0.08经验
+            player.setIdleGoldRate(player.getIdleGoldRate().add(new BigDecimal("0.15")));
+            player.setIdleExpRate(player.getIdleExpRate().add(new BigDecimal("0.08")));
             levelUp = true;
             newLevel = player.getLevel();
         }
@@ -173,12 +175,12 @@ public class PlayerServiceImpl implements PlayerService {
 
         player.setExp(player.getExp() - expNeeded);
         player.setLevel(player.getLevel() + 1);
-        player.setAttack(player.getAttack() + 3);
-        player.setDefense(player.getDefense() + 2);
-        player.setMaxHp(player.getMaxHp() + 20);
+        player.setAttack(player.getAttack() + 2);
+        player.setDefense(player.getDefense() + 1);
+        player.setMaxHp(player.getMaxHp() + 15);
         player.setHp(player.getMaxHp());
-        player.setIdleGoldRate(player.getIdleGoldRate().add(new BigDecimal("0.2")));
-        player.setIdleExpRate(player.getIdleExpRate().add(new BigDecimal("0.1")));
+        player.setIdleGoldRate(player.getIdleGoldRate().add(new BigDecimal("0.15")));
+        player.setIdleExpRate(player.getIdleExpRate().add(new BigDecimal("0.08")));
         player.setUpdatedAt(LocalDateTime.now());
         playerMapper.updateById(player);
 
@@ -187,7 +189,9 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     private long getExpToNextLevel(int level) {
-        return (long) (100 * Math.pow(1.5, level - 1));
+        // 平滑曲线: 80 * 1.35^(level-1)
+        // Level 1: 80, Level 10: 1427, Level 20: 50093, Level 30: 1.76M
+        return (long) (80 * Math.pow(1.35, level - 1));
     }
 
     private PlayerVO toPlayerVO(Player player) {

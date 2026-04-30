@@ -149,7 +149,7 @@ export default function PetPage({ showToast }: Props) {
                 <button className="btn btn-primary btn-sm" style={{ flex: 1 }} onClick={() => skill(selected)}>灵技 ({selected.skillLevel * 100}灵石)</button>
               </div>
               {selected.evolutionTo && (
-                <button className="btn btn-primary" onClick={() => evolve(selected)} disabled={selected.level < 10}>
+                <button className="btn btn-primary btn-click" onClick={() => evolve(selected)} disabled={selected.level < 10}>
                   进化 {selected.level < 10 ? '(需第10重)' : ''}
                 </button>
               )}
@@ -170,7 +170,7 @@ export default function PetPage({ showToast }: Props) {
             <div style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '8px', marginBottom: 12 }}>{showSummon.name}</div>
             <div className={`badge badge-${showSummon.rarity.toLowerCase()}`} style={{ marginBottom: 16 }}>{rarityName(showSummon.rarity)}</div>
             <div style={{ fontSize: '0.85rem', color: 'var(--ink-light)', marginBottom: 24, fontStyle: 'italic' }}>「{showSummon.description}」</div>
-            <button className="btn btn-primary" onClick={() => setShowSummon(null)}>收下</button>
+            <button className="btn btn-primary btn-click" onClick={() => setShowSummon(null)}>收下</button>
           </div>
         </div>
       )}

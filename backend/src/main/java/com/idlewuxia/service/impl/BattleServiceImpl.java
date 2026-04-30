@@ -144,12 +144,12 @@ public class BattleServiceImpl implements BattleService {
             while (player.getExp() >= getExpToNextLevel(player.getLevel())) {
                 player.setExp(player.getExp() - getExpToNextLevel(player.getLevel()));
                 player.setLevel(player.getLevel() + 1);
-                player.setAttack(player.getAttack() + 3);
-                player.setDefense(player.getDefense() + 2);
-                player.setMaxHp(player.getMaxHp() + 20);
+                player.setAttack(player.getAttack() + 2);
+                player.setDefense(player.getDefense() + 1);
+                player.setMaxHp(player.getMaxHp() + 15);
                 player.setHp(player.getMaxHp());
-                player.setIdleGoldRate(player.getIdleGoldRate().add(new java.math.BigDecimal("0.2")));
-                player.setIdleExpRate(player.getIdleExpRate().add(new java.math.BigDecimal("0.1")));
+                player.setIdleGoldRate(player.getIdleGoldRate().add(new java.math.BigDecimal("0.15")));
+                player.setIdleExpRate(player.getIdleExpRate().add(new java.math.BigDecimal("0.08")));
                 levelUp = true;
             }
             result.setLevelUp(levelUp);
@@ -207,12 +207,12 @@ public class BattleServiceImpl implements BattleService {
         while (player.getExp() >= getExpToNextLevel(player.getLevel())) {
             player.setExp(player.getExp() - getExpToNextLevel(player.getLevel()));
             player.setLevel(player.getLevel() + 1);
-            player.setAttack(player.getAttack() + 3);
-            player.setDefense(player.getDefense() + 2);
-            player.setMaxHp(player.getMaxHp() + 20);
+            player.setAttack(player.getAttack() + 2);
+            player.setDefense(player.getDefense() + 1);
+            player.setMaxHp(player.getMaxHp() + 15);
             player.setHp(player.getMaxHp());
-            player.setIdleGoldRate(player.getIdleGoldRate().add(new java.math.BigDecimal("0.2")));
-            player.setIdleExpRate(player.getIdleExpRate().add(new java.math.BigDecimal("0.1")));
+            player.setIdleGoldRate(player.getIdleGoldRate().add(new java.math.BigDecimal("0.15")));
+            player.setIdleExpRate(player.getIdleExpRate().add(new java.math.BigDecimal("0.08")));
             levelUp = true;
         }
         result.setLevelUp(levelUp);
@@ -229,7 +229,8 @@ public class BattleServiceImpl implements BattleService {
     }
 
     private long getExpToNextLevel(int level) {
-        return (long) (100 * Math.pow(1.5, level - 1));
+        // 平滑曲线: 80 * 1.35^(level-1)
+        return (long) (80 * Math.pow(1.35, level - 1));
     }
 
     private Stage getNextStage(Stage current) {

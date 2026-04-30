@@ -69,13 +69,13 @@ export default function HomePage({ showToast }: Props) {
   };
 
   return (
-    <div className="fade-in">
+    <div className="fade-up">
       <h2 className="page-title">仙府</h2>
 
       {/* 角色面板 - 云雾悬浮 */}
       <div className="card">
         <div className="flex-between mb-24">
-          <div>
+          <div className="drop-in">
             <span style={{ 
               fontSize: '1.6rem', 
               color: 'var(--ink-deep)', 
@@ -93,7 +93,7 @@ export default function HomePage({ showToast }: Props) {
               alignItems: 'center',
               gap: '12px'
             }}>
-              <span style={{ 
+              <span className="stamp-animate" style={{ 
                 padding: '4px 12px',
                 background: 'var(--ink-dark)',
                 color: 'var(--paper)',
@@ -106,7 +106,7 @@ export default function HomePage({ showToast }: Props) {
             </div>
           </div>
           {/* 墨块按钮 */}
-          <button className="btn btn-primary btn-sm" onClick={handleUpgrade}>
+          <button className="btn btn-primary btn-sm btn-click" onClick={handleUpgrade}>
             突破境界
           </button>
         </div>
@@ -134,7 +134,7 @@ export default function HomePage({ showToast }: Props) {
         </div>
 
         {/* 属性 - 极简数字 */}
-        <div className="grid-3" style={{ 
+        <div className="grid-3 stagger-in" style={{ 
           padding: '20px 0',
           borderTop: '1px solid var(--ink-whisper)'
         }}>

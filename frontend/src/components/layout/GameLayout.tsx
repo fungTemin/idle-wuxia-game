@@ -79,12 +79,12 @@ export default function GameLayout({ children }: Props) {
   if (!player) return null;
 
   return (
-    <div className="game-layout">
+    <div className="game-layout fade-in">
       {/* 顶部 - 极简 */}
       <header className="header">
         <div className="header-content">
           {/* 标题 - 竹节装饰 */}
-          <div className="game-title">
+          <div className="game-title bamboo-animate">
             <div className="bamboo-left">
               <div className="bamboo-segment" />
               <div className="bamboo-node" />
@@ -113,7 +113,7 @@ export default function GameLayout({ children }: Props) {
               <span className="resource-value">第{player.level}重</span>
             </div>
             <BambooDivider vertical />
-            <button className="btn btn-secondary btn-sm" onClick={logout}>
+            <button className="btn btn-secondary btn-sm btn-click" onClick={logout}>
               归隐
             </button>
           </div>

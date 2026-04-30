@@ -81,10 +81,10 @@ export default function BattlePage({ showToast }: Props) {
           )}
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
-          <button className="btn btn-primary" onClick={startBattle} disabled={battling || !cur} style={{ flex: 1 }}>
-            {battling ? '...' : '挑战'}
+          <button className="btn btn-primary btn-click" onClick={startBattle} disabled={battling || !cur} style={{ flex: 1 }}>
+            {battling ? <span className="loading-dots"><span/><span/><span/></span> : '挑战'}
           </button>
-          <button className="btn btn-secondary" onClick={quickBattle} disabled={battling || (player?.currentStageId || 1) <= 1} style={{ flex: 1 }}>
+          <button className="btn btn-secondary btn-click" onClick={quickBattle} disabled={battling || (player?.currentStageId || 1) <= 1} style={{ flex: 1 }}>
             扫荡
           </button>
         </div>
@@ -94,8 +94,8 @@ export default function BattlePage({ showToast }: Props) {
       {showResult && battleResult && (
         <div className="modal-overlay" onClick={() => setShowResult(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ fontSize: '1.8rem', color: battleResult.victory ? 'var(--ink-deep)' : 'var(--cinnabar)', fontWeight: 200, letterSpacing: '10px' }}>
+            <div className={battleResult.victory ? 'victory-glow' : 'battle-shake'} style={{ textAlign: 'center', marginBottom: 24, padding: '16px 0' }}>
+              <div className="stamp-animate" style={{ fontSize: '1.8rem', color: battleResult.victory ? 'var(--ink-deep)' : 'var(--cinnabar)', fontWeight: 200, letterSpacing: '10px' }}>
                 {battleResult.victory ? '胜' : '败'}
               </div>
               <div style={{ width: 30, height: 2, background: battleResult.victory ? 'var(--ink-dark)' : 'var(--cinnabar)', margin: '12px auto' }} />
@@ -118,7 +118,7 @@ export default function BattlePage({ showToast }: Props) {
               </div>
             )}
             <div style={{ textAlign: 'center', marginTop: 20 }}>
-              <button className="btn btn-primary" onClick={() => setShowResult(false)}>确定</button>
+              <button className="btn btn-primary btn-click" onClick={() => setShowResult(false)}>确定</button>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function BattlePage({ showToast }: Props) {
       {/* 关卡列表 */}
       <div className="card mt-24">
         <div className="card-title">关卡</div>
-        <div className="stage-grid">
+        <div className="stage-grid stagger-in">
           {stages.map(s => (
             <div key={s.id} className={`stage-card ${!s.unlocked ? 'locked' : ''} ${s.current ? 'current' : ''}`}>
               <div className="flex-between mb-8">

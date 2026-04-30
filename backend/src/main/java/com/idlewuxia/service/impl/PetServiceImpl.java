@@ -39,7 +39,20 @@ public class PetServiceImpl implements PetService {
         LambdaQueryWrapper<PlayerPet> qw = new LambdaQueryWrapper<>();
         qw.eq(PlayerPet::getPlayerId, playerId).orderByDesc(PlayerPet::getIsActive).orderByAsc(PlayerPet::getCreatedAt);
         List<PlayerPet> pets = playerPetMapper.selectList(qw);
-        return pets.stream().map(this::toPetVO).collect(Collectors.toList());
+        
+        if (pets.isEmpty()) return Collections.emptyList();
+        
+        // 批量加载宠物模板，避免 N+1 查询
+        Set<Integer> templateIds = pets.stream()
+                .map(PlayerPet::getPetTemplateId)
+                .collect(Collectors.toSet());
+        Map<Integer, PetTemplate> templateMap = petTemplateMapper.selectBatchIds(templateIds)
+                .stream()
+                .collect(Collectors.toMap(PetTemplate::getId, t -> t));
+        
+        return pets.stream()
+                .map(pet -> toPetVO(pet, templateMap.get(pet.getPetTemplateId())))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -207,6 +220,10 @@ public class PetServiceImpl implements PetService {
 
     private PetVO toPetVO(PlayerPet pet) {
         PetTemplate template = petTemplateMapper.selectById(pet.getPetTemplateId());
+        return toPetVO(pet, template);
+    }
+
+    private PetVO toPetVO(PlayerPet pet, PetTemplate template) {
         PetVO vo = new PetVO();
         vo.setId(pet.getId());
         vo.setPetTemplateId(pet.getPetTemplateId());
