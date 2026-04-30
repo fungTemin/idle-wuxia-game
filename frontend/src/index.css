@@ -1,0 +1,829 @@
+/* ========================================
+   仙侠放置录 - 极简黑白水墨风格
+   Mono-chromatic Ink Wash Style
+   ======================================== */
+
+:root {
+  /* 墨分五色 - 纯黑白灰阶 */
+  --ink-void: #000000;        /* 焦墨 */
+  --ink-deep: #111111;        /* 浓墨 */
+  --ink-dark: #222222;        /* 重墨 */
+  --ink-medium: #444444;      /* 中墨 */
+  --ink-light: #777777;       /* 淡墨 */
+  --ink-faint: #aaaaaa;       /* 清墨 */
+  --ink-ghost: #cccccc;       /* 墨影 */
+  --ink-whisper: #e5e5e5;     /* 墨痕 */
+  --ink-mist: #f0f0f0;        /* 墨雾 */
+
+  /* 宣纸 */
+  --paper: #fafaf5;           /* 宣纸白 */
+  --paper-warm: #f5f0e8;      /* 暖宣纸 */
+  --paper-fiber: #f2ede4;     /* 纤维感 */
+
+  /* 点睛 */
+  --cinnabar: #c23a2a;        /* 朱砂 */
+  --cinnabar-deep: #8b1a1a;   /* 深朱砂 */
+  --gold: #b8860b;            /* 描金 */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Noto Serif SC', 'STSong', 'SimSun', 'FangSong', 'KaiTi', serif;
+  background: var(--paper);
+  color: var(--ink-dark);
+  min-height: 100vh;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* 宣纸纤维质感 - 极淡 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)' opacity='0.015'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root { min-height: 100vh; position: relative; z-index: 1; }
+
+/* 极简滚动条 */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ink-ghost); border-radius: 2px; }
+
+/* ========================================
+   布局 - 宣纸留白
+   ======================================== */
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 顶部 - 极简 */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 250, 245, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+}
+
+/* 标题 - 竹节装饰 */
+.game-title {
+  font-size: 1.6rem;
+  color: var(--ink-deep);
+  letter-spacing: 10px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 左竹节 */
+.bamboo-left, .bamboo-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  opacity: 0.4;
+}
+
+.bamboo-segment {
+  width: 3px;
+  height: 18px;
+  background: var(--ink-medium);
+  border-radius: 1px;
+}
+
+.bamboo-node {
+  width: 7px;
+  height: 2px;
+  background: var(--ink-dark);
+  border-radius: 1px;
+}
+
+/* 资源栏 - 白描风格 */
+.resource-bar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 0;
+  background: none;
+  border: none;
+  position: relative;
+}
+
+/* 白描图标 */
+.resource-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+}
+
+.resource-value {
+  color: var(--ink-deep);
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+}
+
+/* 导航 - 宣纸上直接排列 */
+.nav-bar {
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 40px 0;
+  position: relative;
+}
+
+.nav-bar::before, .nav-bar::after { display: none; }
+
+.nav-item {
+  padding: 12px 28px 16px;
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 1rem;
+  border: none;
+  border-bottom: none;
+  transition: all 0.3s ease;
+  letter-spacing: 5px;
+  user-select: none;
+  position: relative;
+  font-weight: 400;
+  background: none;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: var(--ink-dark);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 飞白效果 - 不规则边缘 */
+  border-radius: 0 2px 0 1px;
+  filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence baseFrequency='0.05' numOctaves='2'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2'/%3E%3C/filter%3E%3C/svg%3E#f");
+}
+
+.nav-item:hover {
+  color: var(--ink-medium);
+}
+
+.nav-item.active {
+  color: var(--ink-deep);
+  font-weight: 700;
+}
+
+.nav-item.active::before {
+  width: 70%;
+  background: var(--ink-dark);
+}
+
+/* 主内容 */
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 40px 60px;
+  width: 100%;
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 1.3rem;
+  color: var(--ink-deep);
+  margin-bottom: 32px;
+  letter-spacing: 8px;
+  font-weight: 400;
+  position: relative;
+  display: inline-block;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--ink-medium);
+  border-radius: 1px;
+}
+
+/* ========================================
+   面板 - 云雾悬浮
+   ======================================== */
+.card {
+  background: rgba(250, 250, 245, 0.6);
+  border: none;
+  border-radius: 0;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  box-shadow: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+/* 墨雾边缘 - 淡墨虚化 */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    135deg,
+    rgba(0,0,0,0.04) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgba(0,0,0,0.03) 100%
+  );
+  pointer-events: none;
+  mask-image: 
+    linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+/* 底部淡墨晕染 */
+.card::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 10%;
+  right: 10%;
+  height: 16px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.card:hover {
+  background: rgba(250, 250, 245, 0.8);
+}
+
+.card-title {
+  font-size: 0.95rem;
+  color: var(--ink-medium);
+  margin-bottom: 20px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  position: relative;
+  padding-left: 0;
+}
+
+.card-title::before { display: none; }
+
+/* ========================================
+   按钮 - 墨块/朱砂印章
+   ======================================== */
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  letter-spacing: 3px;
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-dark);
+}
+
+/* 墨块按钮 */
+.btn-primary {
+  background: var(--ink-dark);
+  color: var(--paper);
+  border: none;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-primary:hover {
+  background: var(--ink-deep);
+  transform: translateY(-1px);
+}
+
+.btn-primary:hover::before { opacity: 1; }
+
+.btn-primary:disabled {
+  background: var(--ink-ghost);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 次按钮 - 淡墨框 */
+.btn-secondary {
+  background: transparent;
+  color: var(--ink-medium);
+  border: 1px solid var(--ink-ghost);
+}
+
+.btn-secondary:hover {
+  background: var(--ink-mist);
+  border-color: var(--ink-faint);
+  color: var(--ink-dark);
+}
+
+/* 朱砂按钮 */
+.btn-cinnabar {
+  background: var(--cinnabar);
+  color: var(--paper);
+}
+
+.btn-cinnabar:hover {
+  background: var(--cinnabar-deep);
+}
+
+/* 小按钮 */
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+/* ========================================
+   进度条 - 飞白飞溅
+   ======================================== */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--ink-whisper);
+  border-radius: 0;
+  overflow: visible;
+  border: none;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 0;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: visible;
+}
+
+/* 飞白飞溅效果 */
+.progress-fill::before {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, var(--ink-dark) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* 飞白轨迹纹理 */
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(255,255,255,0.15) 30%, 
+      transparent 40%,
+      rgba(255,255,255,0.1) 60%,
+      transparent 70%
+    );
+  animation: ink-trail 3s ease-in-out infinite;
+}
+
+@keyframes ink-trail {
+  0%, 100% { transform: translateX(-100%); opacity: 0; }
+  50% { transform: translateX(100%); opacity: 1; }
+}
+
+.progress-fill.exp {
+  background: linear-gradient(90deg, var(--ink-medium) 0%, var(--ink-dark) 100%);
+}
+
+.progress-fill.hp {
+  background: linear-gradient(90deg, var(--ink-light) 0%, var(--ink-medium) 100%);
+}
+
+.progress-fill.achievement {
+  background: linear-gradient(90deg, var(--ink-medium) 0%, var(--ink-deep) 100%);
+}
+
+/* ========================================
+   徽章 - 印章风格
+   ======================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  border: 1.5px solid;
+  background: transparent;
+}
+
+.badge-n { color: var(--ink-faint); border-color: var(--ink-faint); }
+.badge-r { color: var(--ink-light); border-color: var(--ink-light); }
+.badge-sr { color: var(--ink-medium); border-color: var(--ink-medium); }
+.badge-ssr { color: var(--ink-dark); border-color: var(--ink-dark); }
+
+/* ========================================
+   网格
+   ======================================== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.text-center { text-align: center; }
+.mt-8 { margin-top: 8px; } .mt-16 { margin-top: 16px; } .mt-24 { margin-top: 24px; }
+.mb-8 { margin-bottom: 8px; } .mb-16 { margin-bottom: 16px; } .mb-24 { margin-bottom: 24px; }
+
+/* ========================================
+   空状态
+   ======================================== */
+.empty-state {
+  text-align: center;
+  padding: 80px 40px;
+  color: var(--ink-faint);
+  background: transparent;
+  border: none;
+  position: relative;
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(0,0,0,0.015) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* ========================================
+   登录页
+   ======================================== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.login-box {
+  background: rgba(250, 250, 245, 0.9);
+  border: none;
+  border-radius: 0;
+  padding: 56px;
+  width: 420px;
+  position: relative;
+  z-index: 10;
+  box-shadow: none;
+  backdrop-filter: blur(20px);
+}
+
+/* 墨雾边缘 */
+.login-box::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.login-box::after { display: none; }
+
+.login-title {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--ink-deep);
+  margin-bottom: 8px;
+  letter-spacing: 14px;
+  font-weight: 900;
+}
+
+.login-title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: var(--ink-dark);
+  margin: 24px auto 0;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 0.9rem;
+  margin-bottom: 40px;
+  letter-spacing: 4px;
+  font-weight: 300;
+}
+
+.form-group { margin-bottom: 28px; }
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  margin-bottom: 10px;
+  letter-spacing: 3px;
+  font-weight: 400;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-whisper);
+  border-radius: 0;
+  color: var(--ink-deep);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.form-input:focus {
+  outline: none;
+  border-bottom-color: var(--ink-dark);
+  background: transparent;
+}
+
+.form-input::placeholder {
+  color: var(--ink-ghost);
+  letter-spacing: 2px;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 16px;
+  font-size: 0.95rem;
+  letter-spacing: 6px;
+}
+
+.login-switch {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  letter-spacing: 2px;
+}
+
+.login-switch a {
+  color: var(--ink-dark);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--ink-ghost);
+  padding-bottom: 2px;
+  transition: all 0.2s;
+}
+
+.login-switch a:hover {
+  border-bottom-color: var(--ink-dark);
+}
+
+/* ========================================
+   战斗日志
+   ======================================== */
+.battle-log {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  padding: 16px 0;
+  background: transparent;
+  border: none;
+  margin-top: 16px;
+}
+
+.battle-log p {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ink-mist);
+  letter-spacing: 1px;
+}
+
+/* ========================================
+   关卡
+   ======================================== */
+.stage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.stage-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  border-left: 2px solid transparent;
+}
+
+.stage-card::before { display: none; }
+
+.stage-card:hover:not(.locked) {
+  background: rgba(0,0,0,0.01);
+  border-left-color: var(--ink-medium);
+  transform: translateX(4px);
+}
+
+.stage-card.locked {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.stage-card.current {
+  border-left-color: var(--ink-dark);
+  background: rgba(0,0,0,0.015);
+}
+
+/* ========================================
+   模态框
+   ======================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(12px);
+}
+
+.modal-content {
+  background: var(--paper);
+  border: none;
+  border-radius: 0;
+  padding: 40px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+  position: relative;
+  animation: modal-fade 0.3s ease;
+}
+
+@keyframes modal-fade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   宠物卡片
+   ======================================== */
+.pet-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+  border-bottom: 1px solid var(--ink-whisper);
+}
+
+.pet-card::after { display: none; }
+
+.pet-card:hover {
+  background: rgba(0,0,0,0.01);
+}
+
+.pet-card.active {
+  border-bottom-color: var(--ink-dark);
+  background: rgba(0,0,0,0.02);
+}
+
+/* ========================================
+   成就卡片
+   ======================================== */
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ink-whisper);
+  border-radius: 0;
+  transition: all 0.2s;
+}
+
+.achievement-card:hover {
+  background: rgba(0,0,0,0.01);
+}
+
+.achievement-card.completed {
+  border-bottom-color: var(--ink-medium);
+}
+
+.achievement-card.rewarded {
+  opacity: 0.3;
+}
+
+/* ========================================
+   Toast
+   ======================================== */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 14px 24px;
+  border-radius: 0;
+  color: var(--paper);
+  font-size: 0.9rem;
+  z-index: 2000;
+  animation: toast-in 0.3s ease;
+  letter-spacing: 2px;
+  font-weight: 400;
+}
+
+.toast.success { background: var(--ink-dark); }
+.toast.error { background: var(--cinnabar); }
+.toast.info { background: var(--ink-medium); }
+
+@keyframes toast-in {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ========================================
+   响应式
+   ======================================== */
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .header-content { padding: 16px 20px; }
+  .game-title { font-size: 1.2rem; letter-spacing: 6px; }
+  .resource-bar { gap: 12px; }
+  .nav-item { padding: 10px 16px 14px; font-size: 0.9rem; letter-spacing: 3px; }
+  .main-content { padding: 20px; }
+  .login-box { width: 92%; padding: 32px; }
+  .stage-grid { grid-template-columns: 1fr; }
+}
+
+/* ========================================
+   动画
+   ======================================== */
+.fade-in { animation: fade-in 0.5s ease; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
